@@ -16,6 +16,7 @@ namespace xUnit.CodeAnalysis.Test.Helpers
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
+        private static readonly MetadataReference RuntimeReference = MetadataReference.CreateFromFile(PortableClassLibrarySystemRuntimeDllPath);
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
@@ -26,6 +27,7 @@ namespace xUnit.CodeAnalysis.Test.Helpers
         private const string CSharpDefaultFileExt = "cs";
         private const string VisualBasicDefaultExt = "vb";
         private const string TestProjectName = "TestProject";
+        private const string PortableClassLibrarySystemRuntimeDllPath = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETPortable\v4.5\Profile\Profile7\System.Runtime.dll";
 
         #region  Get Diagnostics
 
@@ -147,10 +149,11 @@ namespace xUnit.CodeAnalysis.Test.Helpers
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
+            
             var solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
+                .AddMetadataReference(projectId, RuntimeReference)
                 .AddMetadataReference(projectId, CorlibReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
