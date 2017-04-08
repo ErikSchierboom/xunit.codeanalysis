@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Xunit;
 
 namespace xUnit.CodeAnalysis.Test.Helpers
 {
@@ -19,11 +20,12 @@ namespace xUnit.CodeAnalysis.Test.Helpers
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        private static readonly MetadataReference XUnitReference = MetadataReference.CreateFromFile(typeof(FactAttribute).Assembly.Location);
 
-        internal static string DefaultFilePathPrefix = "Test";
-        internal static string CSharpDefaultFileExt = "cs";
-        internal static string VisualBasicDefaultExt = "vb";
-        internal static string TestProjectName = "TestProject";
+        private const string DefaultFilePathPrefix = "Test";
+        private const string CSharpDefaultFileExt = "cs";
+        private const string VisualBasicDefaultExt = "vb";
+        private const string TestProjectName = "TestProject";
 
         #region  Get Diagnostics
 
@@ -152,7 +154,8 @@ namespace xUnit.CodeAnalysis.Test.Helpers
                 .AddMetadataReference(projectId, CorlibReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+                .AddMetadataReference(projectId, CodeAnalysisReference)
+                .AddMetadataReference(projectId, XUnitReference);
 
             int count = 0;
             foreach (var source in sources)
