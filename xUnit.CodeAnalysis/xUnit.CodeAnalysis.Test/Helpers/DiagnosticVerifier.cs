@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TestHelper
+namespace xUnit.CodeAnalysis.Test.Helpers
 {
     /// <summary>
     /// Superclass of all Unit Tests for DiagnosticAnalyzers

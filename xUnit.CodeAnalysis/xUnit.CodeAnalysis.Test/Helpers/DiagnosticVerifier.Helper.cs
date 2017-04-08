@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace TestHelper
+namespace xUnit.CodeAnalysis.Test.Helpers
 {
     /// <summary>
     /// Class for turning strings into documents and getting the diagnostics on them
