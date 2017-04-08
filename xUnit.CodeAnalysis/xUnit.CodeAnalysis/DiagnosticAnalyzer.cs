@@ -2,37 +2,59 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Xunit;
 
 namespace xUnit.CodeAnalysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "xUnitCodeAnalysis";
-        private const string Category = "Naming";
+        public const string FactWithParametersDiagnosticId = "FactWithParameters";
 
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Resources.AnalyzerTitle, Resources.AnalyzerMessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, description: Resources.AnalyzerDescription);
+        private static readonly DiagnosticDescriptor FactWithParametersRule = new DiagnosticDescriptor(
+            id: FactWithParametersDiagnosticId, 
+            title: "[Fact] methods with parameters", 
+            messageFormat: "[Fact] methods are not allowed to have parameters", 
+            category: "xUnit.Usage", 
+            defaultSeverity: DiagnosticSeverity.Error, 
+            isEnabledByDefault: true, 
+            description: "[Fact] methods should not have parameters."
+        );
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(FactWithParametersRule);
 
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
-        }
+        public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+            var methodSymbol = (IMethodSymbol)context.Symbol;
 
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            var typeByMetadataName = context.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
+            
+            var factAttributes = methodSymbol.GetAttributes().Where(a => a.AttributeClass.Name == typeByMetadataName.Name).ToImmutableArray();
+
+            if (factAttributes.Any())
             {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+                if (methodSymbol.Parameters.Any())
+                {
+                    var diagnostic = Diagnostic.Create(FactWithParametersRule, methodSymbol.Locations[0], methodSymbol.Name);
 
-                context.ReportDiagnostic(diagnostic);
+                    context.ReportDiagnostic(diagnostic);
+                }
             }
+            else
+            {
+                
+            }
+
+            //// Find just those named type symbols with names containing lowercase letters.
+            //if (methodSymbol.Name.ToCharArray().Any(char.IsLower))
+            //{
+            //    // For all such symbols, produce a diagnostic.
+            //    var diagnostic = Diagnostic.Create(FactWithParametersRule, methodSymbol.Locations[0], methodSymbol.Name);
+
+            //    context.ReportDiagnostic(diagnostic);
+            //}
         }
     }
 }

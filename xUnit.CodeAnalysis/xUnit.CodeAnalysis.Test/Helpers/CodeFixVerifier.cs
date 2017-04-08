@@ -22,7 +22,7 @@ namespace xUnit.CodeAnalysis.Test.Helpers
         /// <returns>The CodeFixProvider to be used for CSharp code</returns>
         protected virtual CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return null;
+            return new XUnitCodeAnalysisCodeFixProvider();
         }
 
         /// <summary>
