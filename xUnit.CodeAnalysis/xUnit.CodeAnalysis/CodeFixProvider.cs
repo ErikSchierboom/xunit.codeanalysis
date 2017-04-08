@@ -12,12 +12,12 @@ using Microsoft.CodeAnalysis.Rename;
 
 namespace xUnit.CodeAnalysis
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(xUnitCodeAnalysisCodeFixProvider)), Shared]
-    public class xUnitCodeAnalysisCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XUnitCodeAnalysisCodeFixProvider)), Shared]
+    public class XUnitCodeAnalysisCodeFixProvider : CodeFixProvider
     {
         private const string Title = "Make uppercase";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(xUnitCodeAnalysisAnalyzer.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(XUnitCodeAnalysisAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

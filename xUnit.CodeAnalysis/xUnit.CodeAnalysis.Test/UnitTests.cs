@@ -69,12 +69,12 @@ namespace xUnit.CodeAnalysis.Test
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new xUnitCodeAnalysisCodeFixProvider();
+            return new XUnitCodeAnalysisCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new xUnitCodeAnalysisAnalyzer();
+            return new XUnitCodeAnalysisAnalyzer();
         }
     }
 }

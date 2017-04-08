@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace xUnit.CodeAnalysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class xUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
+    public class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "xUnitCodeAnalysis";
         private const string Category = "Naming";
