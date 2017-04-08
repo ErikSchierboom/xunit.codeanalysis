@@ -11,7 +11,10 @@ namespace xUnit.CodeAnalysis
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XUnitCodeAnalysisCodeFixProvider)), Shared]
     public partial class XUnitCodeAnalysisCodeFixProvider : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds 
+            => ImmutableArray.Create(
+                XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId,
+                XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
@@ -20,12 +23,10 @@ namespace xUnit.CodeAnalysis
             var diagnostic = context.Diagnostics.First();
             var methodDeclaration = await GetMethodDeclarationSyntax(context, diagnostic);
 
-            switch (diagnostic.Descriptor.Id)
-            {
-                case XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId:
-                    context.RegisterCodeFix(CreateFactWithParametersCodeAction(context, methodDeclaration), diagnostic);
-                    break;
-            }
+            if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId)
+                context.RegisterCodeFix(CreateFactWithParametersCodeAction(context, methodDeclaration), diagnostic);
+            else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
+                context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(context, methodDeclaration), diagnostic);
         }
 
         private static async Task<MethodDeclarationSyntax> GetMethodDeclarationSyntax(CodeFixContext context, Diagnostic diagnostic)

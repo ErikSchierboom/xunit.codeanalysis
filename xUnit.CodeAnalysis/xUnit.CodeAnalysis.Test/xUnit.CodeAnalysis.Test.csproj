@@ -100,7 +100,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ValidTestMethodTests.cs" />
+    <Compile Include="MultipleFactDerivedAttributesTests.cs" />
+    <Compile Include="ValidTests.cs" />
     <Compile Include="FactWithParametersTests.cs" />
     <Compile Include="Helpers\CodeFixVerifier.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.cs" />
@@ -117,6 +118,9 @@
       <Project>{02657ADB-5656-485A-B822-1AE99BDD80A0}</Project>
       <Name>xUnit.CodeAnalysis</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

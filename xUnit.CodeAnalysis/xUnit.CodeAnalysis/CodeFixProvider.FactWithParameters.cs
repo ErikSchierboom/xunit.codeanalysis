@@ -14,10 +14,11 @@ namespace xUnit.CodeAnalysis
         private static CodeAction CreateFactWithParametersCodeAction(CodeFixContext context, MethodDeclarationSyntax declaration) 
             => CodeAction.Create(
                 title: FactWithParametersCodeFixTitle,
-                createChangedDocument: c => RemoveParameters(context.Document, declaration, c),
+                createChangedDocument: c => RemoveParametersFromTestMethodWithFactAndParameters(context.Document, declaration, c),
                 equivalenceKey: FactWithParametersCodeFixTitle);
 
-        private static async Task<Document> RemoveParameters(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveParametersFromTestMethodWithFactAndParameters(
+            Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var parameterListWithoutParameters = methodDeclaration.ParameterList.WithParameters(new SeparatedSyntaxList<ParameterSyntax>());
             var methodDeclarationWithoutParameters = methodDeclaration.WithParameterList(parameterListWithoutParameters);

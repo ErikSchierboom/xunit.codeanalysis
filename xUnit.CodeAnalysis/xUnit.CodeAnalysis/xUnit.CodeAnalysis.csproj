@@ -35,8 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CodeFixProvider.cs" />
+    <Compile Include="CodeFixProvider.MultipleFactDerivedAttributes.cs" />
     <Compile Include="CodeFixProvider.FactWithParameters.cs" />
     <Compile Include="DiagnosticAnalyzer.cs" />
+    <Compile Include="NamedTypeSymbolExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -4,7 +4,7 @@ using xUnit.CodeAnalysis.Test.Helpers;
 namespace xUnit.CodeAnalysis.Test
 {
     [TestClass]
-    public class ValidTestMethodTests : DiagnosticVerifier
+    public class ValidTests : DiagnosticVerifier
     {
         [TestMethod]
         public void NoDiagnosticsForValidFactTestMethod()
