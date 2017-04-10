@@ -1,12 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xUnit.CodeAnalysis.Test.Helpers;
+﻿using xUnit.CodeAnalysis.Test.Helpers;
+using Xunit;
 
 namespace xUnit.CodeAnalysis.Test
 {
-    [TestClass]
     public class ValidTests : DiagnosticVerifier
     {
-        [TestMethod]
+        [Fact]
         public void NoDiagnosticsForValidFactTestMethod()
         {
             const string test = @"
@@ -24,7 +23,7 @@ namespace xUnit.CodeAnalysis.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void NoDiagnosticsForValidTheoryTestMethod()
         {
             const string test = @"

@@ -1,13 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xUnit.CodeAnalysis.Test.Helpers;
+using Xunit;
 
 namespace xUnit.CodeAnalysis.Test
 {
-    [TestClass]
     public class FactWithParametersTests : CodeFixVerifier
     {
-        [TestMethod]
+        [Fact]
         public void DiagnosticForFactWithOneParameter()
         {
             const string test = @"
@@ -37,7 +36,7 @@ namespace xUnit.CodeAnalysis.Test
             VerifyCSharpDiagnostic(test, expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void CodeFixForFactWithOneParameter()
         {
             const string test = @"
@@ -68,7 +67,7 @@ namespace xUnit.CodeAnalysis.Test
         }
 
 
-        [TestMethod]
+        [Fact]
         public void DiagnosticForFactWithMultipleParameters()
         {
             const string test = @"
@@ -98,7 +97,7 @@ namespace xUnit.CodeAnalysis.Test
             VerifyCSharpDiagnostic(test, expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void CodeFixForFactWithMultipleParameters()
         {
             const string test = @"
