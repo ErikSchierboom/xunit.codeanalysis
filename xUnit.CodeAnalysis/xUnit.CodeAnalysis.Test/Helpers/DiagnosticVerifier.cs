@@ -28,6 +28,21 @@ namespace xUnit.CodeAnalysis.Test.Helpers
         {
             return null;
         }
+
+        protected string CreateTestClass(string attributes)
+        {
+            return @"
+    using System;
+    using Xunit;
+    
+    public class Tests
+    {
+        " + attributes + @"
+        public void Test()
+        {
+        }
+    }";
+        }
         #endregion
 
         #region Verifier wrappers
