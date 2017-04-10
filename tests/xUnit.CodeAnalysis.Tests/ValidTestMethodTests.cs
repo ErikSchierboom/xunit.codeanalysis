@@ -15,7 +15,7 @@ namespace xUnit.CodeAnalysis.Test
         [InlineData("[Fact, Before(\"before\",\"b\")][Trait(\"after\",\"a\")]")]
         [InlineData("[Before(\"before\",\"b\")][Trait(\"after\",\"a\")][Fact]")]
         [InlineData("[Before(\"before\",\"b\"), Trait(\"after\",\"a\"), Fact]")]
-        public void NoDiagnosticsForValidFactBasedTestMethod(string attributes) => VerifyCSharpDiagnostic(CreateTestClass(attributes));
+        public void NoDiagnosticsForValidFactBasedTestMethod(string attributes) => VerifyCSharpDiagnostic(CreateTestClass(attributes, ""));
 
         [Theory]
         [InlineData("[Theory][InlineData(true)]")]
@@ -27,6 +27,6 @@ namespace xUnit.CodeAnalysis.Test
         [InlineData("[Theory, InlineData(true), Before(\"before\",\"b\")][Trait(\"after\",\"a\")]")]
         [InlineData("[Before(\"before\",\"b\")][Trait(\"after\",\"a\")][Theory][InlineData(true)]")]
         [InlineData("[Before(\"before\",\"b\"), Trait(\"after\",\"a\"), Theory, InlineData(true)]")]
-        public void NoDiagnosticsForValidTheoryBasedTestMethod(string attributes) => VerifyCSharpDiagnostic(CreateTestClass(attributes));
+        public void NoDiagnosticsForValidTheoryBasedTestMethod(string attributes) => VerifyCSharpDiagnostic(CreateTestClass(attributes, "bool expected"));
     }
 }

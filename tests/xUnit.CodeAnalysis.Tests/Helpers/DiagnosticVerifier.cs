@@ -30,7 +30,7 @@ namespace xUnit.CodeAnalysis.Test.Helpers
             return null;
         }
 
-        protected string CreateTestClass(string attributes)
+        protected static string CreateTestClass(string attributes, string parameters)
         {
             return @"
     using System;
@@ -39,7 +39,7 @@ namespace xUnit.CodeAnalysis.Test.Helpers
     public class Tests
     {
         " + attributes + @"
-        public void Test()
+        public void Test(" + parameters + @")
         {
         }
     }";

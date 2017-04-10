@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -16,6 +17,9 @@ namespace xUnit.CodeAnalysis.Diagnostics
             isEnabledByDefault: true,
             description: "Test methods should not have multiple [Fact]-derived attributes."
         );
+
+        private static bool MultipleFactDerivedAttributes(ImmutableArray<AttributeData> factDerivedAttributes) 
+            => factDerivedAttributes.Length > 1;
 
         private static Diagnostic CreateMultipleFactDerivedAttributesDiagnostic(IMethodSymbol methodSymbol) 
             => Diagnostic.Create(MultipleFactDerivedAttributesRule, methodSymbol.Locations[0], methodSymbol.Name);

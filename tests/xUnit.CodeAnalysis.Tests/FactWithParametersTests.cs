@@ -6,20 +6,13 @@ namespace xUnit.CodeAnalysis.Test
 {
     public class FactWithParametersTests : CodeFixVerifier
     {
-        [Fact]
-        public void DiagnosticForFactWithOneParameter()
+        [Theory]
+        [InlineData("[Fact]", "int expected")]
+        [InlineData("[Fact]", "string input, bool valid, int expected")]
+        [InlineData("[Fact]", "string input, bool valid, int expected")]
+        public void DiagnosticForFactWithParameters(string attributes, string parameters)
         {
-            const string test = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
-        [Fact]
-        public void FactWithParameters(int expected)
-        {
-        }
-    }";
+            var testClass = CreateTestClass(attributes, parameters);
 
             var expected = new DiagnosticResult
             {
@@ -33,98 +26,18 @@ namespace xUnit.CodeAnalysis.Test
                     }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            VerifyCSharpDiagnostic(testClass, expected);
         }
 
-        [Fact]
-        public void CodeFixForFactWithOneParameter()
-        {
-            const string test = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
-        [Fact]
-        public void FactWithParameters(int expected)
-        {
-        }
-    }";
-
-            const string fixtest = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
         [Theory]
-        public void FactWithParameters(int expected)
+        [InlineData("[Fact]", "int expected", "[Theory]")]
+        [InlineData("[Fact]", "string input, bool valid, int expected", "[Theory]")]
+        public void CodeFixForFactWithParameters(string attributes, string parameters, string expectedAttributes)
         {
-        }
-    }";
-
-            VerifyCSharpFix(test, fixtest);
-        }
-
-
-        [Fact]
-        public void DiagnosticForFactWithMultipleParameters()
-        {
-            const string test = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
-        [Fact]
-        public void FactWithParameters(string input, bool valid, int expected)
-        {
-        }
-    }";
-
-            var expected = new DiagnosticResult
-            {
-                Id = "FactWithParameters",
-                Message = "[Fact] methods are not allowed to have parameters",
-                Severity = DiagnosticSeverity.Error,
-                Locations =
-                    new[]
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 8, 21)
-                    }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-        }
-
-        [Fact]
-        public void CodeFixForFactWithMultipleParameters()
-        {
-            const string test = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
-        [Fact]
-        public void FactWithParameters(string input, bool valid, int expected)
-        {
-        }
-    }";
-
-            const string fixtest = @"
-    using System;
-    using Xunit;
-
-    public class Tests
-    {
-        [Theory]
-        public void FactWithParameters(string input, bool valid, int expected)
-        {
-        }
-    }";
-
-            VerifyCSharpFix(test, fixtest);
+            var testClass = CreateTestClass(attributes, parameters);
+            var expectedTestClass = CreateTestClass(expectedAttributes, parameters);
+            
+            VerifyCSharpFix(testClass, expectedTestClass);
         }
     }
 }

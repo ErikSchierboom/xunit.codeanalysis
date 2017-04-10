@@ -10,6 +10,8 @@ namespace xUnit.CodeAnalysis.Diagnostics
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public partial class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
     {
+        private static readonly string FactAttributeTypeFullName = typeof(FactAttribute).FullName;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics 
             => ImmutableArray.Create(
                 FactWithParametersRule, 
@@ -20,19 +22,19 @@ namespace xUnit.CodeAnalysis.Diagnostics
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var methodSymbol = (IMethodSymbol) context.Symbol;
-            var typeByMetadataName = context.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
+            var factAttribute = context.Compilation.GetTypeByMetadataName(FactAttributeTypeFullName);
 
             var factDerivedAttributes = methodSymbol
                 .GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFromOrEquals(typeByMetadataName))
+                .Where(a => a.AttributeClass.InheritsFromOrEquals(factAttribute))
                 .ToImmutableArray();
 
             if (!factDerivedAttributes.Any())
                 return;
 
-            if (factDerivedAttributes.Length > 1)
+            if (MultipleFactDerivedAttributes(factDerivedAttributes))
                 context.ReportDiagnostic(CreateMultipleFactDerivedAttributesDiagnostic(methodSymbol));
-            else if (methodSymbol.Parameters.Any())
+            else if (FactWithParameters(factDerivedAttributes, factAttribute, methodSymbol))
                 context.ReportDiagnostic(CreateFactWithParametersDiagnostic(methodSymbol));
         }
     }
