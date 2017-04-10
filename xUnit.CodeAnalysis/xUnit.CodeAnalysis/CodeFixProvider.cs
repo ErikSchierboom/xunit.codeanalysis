@@ -24,7 +24,7 @@ namespace xUnit.CodeAnalysis
             var methodDeclaration = await GetMethodDeclarationSyntax(context, diagnostic);
 
             if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId)
-                context.RegisterCodeFix(CreateFactWithParametersCodeAction(context, methodDeclaration), diagnostic);
+                context.RegisterCodeFix(CreateReplaceFactWithTheoryCodeAction(context, methodDeclaration), diagnostic);
             else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
                 context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(context, methodDeclaration), diagnostic);
         }

@@ -58,8 +58,8 @@ namespace xUnit.CodeAnalysis.Test
 
     public class Tests
     {
-        [Fact]
-        public void FactWithParameters()
+        [Theory]
+        public void FactWithParameters(int expected)
         {
         }
     }";
@@ -119,8 +119,8 @@ namespace xUnit.CodeAnalysis.Test
 
     public class Tests
     {
-        [Fact]
-        public void FactWithParameters()
+        [Theory]
+        public void FactWithParameters(string input, bool valid, int expected)
         {
         }
     }";

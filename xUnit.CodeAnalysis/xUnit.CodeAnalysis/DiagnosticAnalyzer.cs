@@ -44,7 +44,7 @@ namespace xUnit.CodeAnalysis
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
             var typeByMetadataName = context.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
-            
+
             var factDerivedAttributes = methodSymbol
                 .GetAttributes()
                 .Where(a => a.AttributeClass.InheritsFromOrEquals(typeByMetadataName))
@@ -52,7 +52,7 @@ namespace xUnit.CodeAnalysis
 
             if (!factDerivedAttributes.Any())
                 return;
-
+            
             if (factDerivedAttributes.Length > 1)
                 context.ReportDiagnostic(Diagnostic.Create(MultipleFactDerivedAttributesRule, methodSymbol.Locations[0], methodSymbol.Name));
             else if (methodSymbol.Parameters.Any())

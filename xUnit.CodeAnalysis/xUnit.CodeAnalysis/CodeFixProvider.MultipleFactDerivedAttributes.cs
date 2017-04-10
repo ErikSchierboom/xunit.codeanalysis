@@ -24,9 +24,6 @@ namespace xUnit.CodeAnalysis
         private static async Task<Document> RemoveDuplicateFactDerivedAttributes(
             Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
-            
-
-
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
             
             var factSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
