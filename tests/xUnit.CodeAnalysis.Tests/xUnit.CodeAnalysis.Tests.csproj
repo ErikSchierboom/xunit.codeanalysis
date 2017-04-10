@@ -117,7 +117,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\xUnit.CodeAnalysis\xUnit.CodeAnalysis.csproj">
+    <ProjectReference Include="..\..\src\xUnit.CodeAnalysis\xUnit.CodeAnalysis.csproj">
       <Project>{02657ADB-5656-485A-B822-1AE99BDD80A0}</Project>
       <Name>xUnit.CodeAnalysis</Name>
     </ProjectReference>
