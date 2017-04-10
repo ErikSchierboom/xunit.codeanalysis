@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.Diagnostics
 {
     public partial class XUnitCodeAnalysisAnalyzer
     {

@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.Diagnostics
 {
     public partial class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
     {

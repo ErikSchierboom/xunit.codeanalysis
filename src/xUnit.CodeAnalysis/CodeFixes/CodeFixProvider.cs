@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using xUnit.CodeAnalysis.Diagnostics;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XUnitCodeAnalysisCodeFixProvider)), Shared]
     public partial class XUnitCodeAnalysisCodeFixProvider : CodeFixProvider

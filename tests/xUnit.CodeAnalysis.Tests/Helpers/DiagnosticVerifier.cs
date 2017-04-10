@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using xUnit.CodeAnalysis.Diagnostics;
 using Xunit;
 
 namespace xUnit.CodeAnalysis.Test.Helpers

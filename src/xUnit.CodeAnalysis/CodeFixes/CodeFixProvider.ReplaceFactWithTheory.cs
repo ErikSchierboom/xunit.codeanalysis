@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.CodeFixes
 {
     public partial class XUnitCodeAnalysisCodeFixProvider
     {

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using xUnit.CodeAnalysis.Microsoft.CodeAnalysis.Shared.Extensions;
 using Xunit;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.Diagnostics
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public partial class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer

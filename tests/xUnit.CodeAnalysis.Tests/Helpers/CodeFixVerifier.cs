@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using xUnit.CodeAnalysis.CodeFixes;
 using Xunit;
 
 namespace xUnit.CodeAnalysis.Test.Helpers

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using xUnit.CodeAnalysis.Microsoft.CodeAnalysis.Shared.Extensions;
 using Xunit;
 
-namespace xUnit.CodeAnalysis
+namespace xUnit.CodeAnalysis.CodeFixes
 {
     public partial class XUnitCodeAnalysisCodeFixProvider
     {
