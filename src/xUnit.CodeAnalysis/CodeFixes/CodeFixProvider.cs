@@ -15,6 +15,7 @@ namespace xUnit.CodeAnalysis.CodeFixes
         public sealed override ImmutableArray<string> FixableDiagnosticIds 
             => ImmutableArray.Create(
                 XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId,
+                XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId,
                 XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
@@ -26,6 +27,8 @@ namespace xUnit.CodeAnalysis.CodeFixes
 
             if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId)
                 context.RegisterCodeFix(CreateReplaceFactWithTheoryCodeAction(context, methodDeclaration), diagnostic);
+            else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId)
+                context.RegisterCodeFix(CreateReplaceTheoryWithFactCodeAction(context, methodDeclaration), diagnostic);
             else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
                 context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(context, methodDeclaration), diagnostic);
         }

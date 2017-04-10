@@ -25,7 +25,18 @@ namespace xUnit.CodeAnalysis.Sample
         public void FactInParameterListWithMultipleParameters(string input, bool valid, int expected)
         {
         }
-        
+
+        [Theory]
+        public void TheoryWithoutData()
+        {
+        }
+
+        [Theory]
+        [InlineData(1)]
+        public void TheoryWithoutParameters()
+        {
+        }
+
         [InlineData(1)]
         public void InlineDataWithoutTheory()
         {

@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MultipleFactDerivedAttributesTests.cs" />
+    <Compile Include="TheoryWithoutParametersTests.cs" />
     <Compile Include="ValidTestMethodTests.cs" />
     <Compile Include="FactWithParametersTests.cs" />
     <Compile Include="Helpers\CodeFixVerifier.cs" />

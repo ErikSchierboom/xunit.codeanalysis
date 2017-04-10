@@ -11,10 +11,12 @@ namespace xUnit.CodeAnalysis.Diagnostics
     public partial class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
     {
         private static readonly string FactAttributeTypeFullName = typeof(FactAttribute).FullName;
+        private static readonly string TheoryAttributeTypeFullName = typeof(TheoryAttribute).FullName;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics 
             => ImmutableArray.Create(
                 FactWithParametersRule, 
+                TheoryWithoutParametersRule,
                 MultipleFactDerivedAttributesRule);
 
         public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
@@ -23,6 +25,7 @@ namespace xUnit.CodeAnalysis.Diagnostics
         {
             var methodSymbol = (IMethodSymbol) context.Symbol;
             var factAttribute = context.Compilation.GetTypeByMetadataName(FactAttributeTypeFullName);
+            var theoryAttribute = context.Compilation.GetTypeByMetadataName(TheoryAttributeTypeFullName);
 
             var factDerivedAttributes = methodSymbol
                 .GetAttributes()
@@ -36,6 +39,8 @@ namespace xUnit.CodeAnalysis.Diagnostics
                 context.ReportDiagnostic(CreateMultipleFactDerivedAttributesDiagnostic(methodSymbol));
             else if (FactWithParameters(factDerivedAttributes, factAttribute, methodSymbol))
                 context.ReportDiagnostic(CreateFactWithParametersDiagnostic(methodSymbol));
+            else if (TheoryWithoutParameters(factDerivedAttributes, theoryAttribute, methodSymbol))
+                context.ReportDiagnostic(CreateTheoryWithoutParametersDiagnostic(methodSymbol));
         }
     }
 }
