@@ -103,6 +103,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InlineDataWithoutTheoryTests.cs" />
     <Compile Include="MultipleFactDerivedAttributesTests.cs" />
     <Compile Include="TheoryWithoutParametersTests.cs" />
     <Compile Include="ValidTestMethodTests.cs" />

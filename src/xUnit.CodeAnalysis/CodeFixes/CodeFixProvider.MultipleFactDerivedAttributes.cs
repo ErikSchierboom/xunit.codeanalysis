@@ -28,7 +28,7 @@ namespace xUnit.CodeAnalysis.CodeFixes
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
             
             var factSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
-            var symbolInfo = (IMethodSymbol)ModelExtensions.GetDeclaredSymbol(semanticModel, methodDeclaration, cancellationToken);
+            var symbolInfo = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration, cancellationToken);
 
             var factDerivedAttributes = symbolInfo
                 .GetAttributes()

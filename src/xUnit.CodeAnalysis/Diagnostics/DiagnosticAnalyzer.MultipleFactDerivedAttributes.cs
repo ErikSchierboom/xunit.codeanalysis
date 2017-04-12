@@ -1,10 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace xUnit.CodeAnalysis.Diagnostics
 {
-    public partial class XUnitCodeAnalysisAnalyzer : DiagnosticAnalyzer
+    public partial class XUnitCodeAnalysisAnalyzer
     {
         public const string MultipleFactDerivedAttributesDiagnosticId = "MultipleFactDerivedAttributes";
         
