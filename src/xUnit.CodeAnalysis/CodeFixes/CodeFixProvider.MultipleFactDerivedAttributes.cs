@@ -25,36 +25,25 @@ namespace xUnit.CodeAnalysis.CodeFixes
             Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
             
             var factSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
-            var theorySymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(TheoryAttribute).FullName);
+            var symbolInfo = (IMethodSymbol)ModelExtensions.GetDeclaredSymbol(semanticModel, methodDeclaration, cancellationToken);
 
-            var symbolInfo = (IMethodSymbol)semanticModel.GetDeclaredSymbol(methodDeclaration);
             var factDerivedAttributes = symbolInfo
                 .GetAttributes()
                 .Where(a => a.AttributeClass.InheritsFromOrEquals(factSymbol))
                 .ToImmutableArray();
 
-            SyntaxList<AttributeListSyntax> attributeLists = methodDeclaration.AttributeLists;
+            var updatedMethodDeclaration = methodDeclaration.RemoveNodes(
+                factDerivedAttributes.Skip(1).Select(a => a.ApplicationSyntaxReference.GetSyntax(cancellationToken)),
+                SyntaxRemoveOptions.KeepTrailingTrivia);
 
-            if (methodDeclaration.ParameterList.Parameters.Count > 0)
-            {
-                var theoryAttribute = factDerivedAttributes.FirstOrDefault(f => f.AttributeClass.InheritsFromOrEquals(theorySymbol));
-                if (theoryAttribute != null)
-                {
-                    //attributeLists = new SyntaxList<AttributeListSyntax> { theoryAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken) };
-                }
-                else
-                {
-                    
-                }
-            }
+            updatedMethodDeclaration = updatedMethodDeclaration.RemoveNodes(
+                updatedMethodDeclaration.AttributeLists.Where(a => !a.Attributes.Any()),
+                SyntaxRemoveOptions.KeepTrailingTrivia);
 
-            var methodDeclarationWithoutParameters = methodDeclaration.WithAttributeLists(attributeLists);
-
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
-            var updatedSyntaxRoot = syntaxRoot.ReplaceNode(methodDeclaration, methodDeclarationWithoutParameters);
-
+            var updatedSyntaxRoot = syntaxRoot.ReplaceNode(methodDeclaration, updatedMethodDeclaration);
             return document.WithSyntaxRoot(updatedSyntaxRoot);
         }
     }
