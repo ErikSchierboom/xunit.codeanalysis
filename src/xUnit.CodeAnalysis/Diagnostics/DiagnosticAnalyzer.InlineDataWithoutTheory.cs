@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace xUnit.CodeAnalysis.Diagnostics
@@ -18,10 +16,10 @@ namespace xUnit.CodeAnalysis.Diagnostics
             description: "[InlineData] should have [Theory]."
         );
 
-        private static bool InlineDataWithoutTheory(ImmutableArray<AttributeData> factDerivedAttributes, INamedTypeSymbol theoryAttribute, INamedTypeSymbol inlineDataAttribute, IMethodSymbol methodSymbol) 
-            => methodSymbol.GetAttributes().Any(f => f.AttributeClass.Equals(inlineDataAttribute)) && !factDerivedAttributes.Any(f => f.AttributeClass.Equals(theoryAttribute));
+        private static bool InlineDataWithoutTheory(XUnitSymbolContext context)
+            => context.HasInlineDataAttribute && !context.HasTheoryAttribute;
 
-        private static Diagnostic CreateInlineDataWithoutTheoryDiagnostic(IMethodSymbol methodSymbol)
-            => Diagnostic.Create(InlineDataWithoutTheoryRule, methodSymbol.Locations[0], methodSymbol.Name);
+        private static Diagnostic CreateInlineDataWithoutTheoryDiagnostic(XUnitSymbolContext context)
+            => CreateDiagnostic(InlineDataWithoutTheoryRule, context);
     }
 }

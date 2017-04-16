@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace xUnit.CodeAnalysis.Diagnostics
@@ -18,10 +16,10 @@ namespace xUnit.CodeAnalysis.Diagnostics
             description: "[Theory] methods should have one or more parameters."
         );
 
-        private static bool TheoryWithoutParameters(ImmutableArray<AttributeData> factDerivedAttributes, INamedTypeSymbol theoryAttribute, IMethodSymbol methodSymbol) 
-            => !methodSymbol.Parameters.Any() && factDerivedAttributes.Any(f => f.AttributeClass.Equals(theoryAttribute));
+        private static bool TheoryWithoutParameters(XUnitSymbolContext context) 
+            => !context.HasParameters && context.HasTheoryAttribute;
 
-        private static Diagnostic CreateTheoryWithoutParametersDiagnostic(IMethodSymbol methodSymbol)
-            => Diagnostic.Create(TheoryWithoutParametersRule, methodSymbol.Locations[0], methodSymbol.Name);
+        private static Diagnostic CreateTheoryWithoutParametersDiagnostic(XUnitSymbolContext context)
+            => CreateDiagnostic(TheoryWithoutParametersRule, context);
     }
 }

@@ -21,32 +21,58 @@ namespace xUnit.CodeAnalysis.Diagnostics
                 MultipleFactDerivedAttributesRule,
                 InlineDataWithoutTheoryRule);
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
-
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        public override void Initialize(AnalysisContext analysisContext)
         {
-            var methodSymbol = (IMethodSymbol) context.Symbol;
-            var factSymbol = context.Compilation.GetTypeByMetadataName(FactAttributeTypeFullName);
-            var theorySymbol = context.Compilation.GetTypeByMetadataName(TheoryAttributeTypeFullName);
-            var inlineDataSymbol = context.Compilation.GetTypeByMetadataName(InlineDataAttributeTypeFullName);
+            analysisContext.RegisterCompilationStartAction(compilationStartContext =>
+            {
+                // By doing the symbol analysis here, we ensure that the symbols are only retrieved once per compilation
+                var xUnitSymbolContext = new XUnitSymbolContext
+                {
+                    FactSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(FactAttributeTypeFullName),
+                    TheorySymbol = compilationStartContext.Compilation.GetTypeByMetadataName(TheoryAttributeTypeFullName),
+                    InlineDataSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(InlineDataAttributeTypeFullName)
+                };
 
-            var factDerivedAttributes = methodSymbol
-                .GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFromOrEquals(factSymbol))
-                .ToImmutableArray();
+                compilationStartContext.RegisterSymbolAction(symbolContext =>
+                {
+                    xUnitSymbolContext.MethodSymbol = (IMethodSymbol) symbolContext.Symbol;
+                    xUnitSymbolContext.FactDerivedAttributes = 
+                        xUnitSymbolContext.MethodSymbol
+                            .GetAttributes()
+                            .Where(a => a.AttributeClass.InheritsFromOrEquals(xUnitSymbolContext.FactSymbol))
+                            .ToImmutableArray();
 
-            if (!factDerivedAttributes.Any() && InlineDataWithoutTheory(factDerivedAttributes, theorySymbol, inlineDataSymbol, methodSymbol))
-                context.ReportDiagnostic(CreateInlineDataWithoutTheoryDiagnostic(methodSymbol));
+                    if (!xUnitSymbolContext.FactDerivedAttributes.Any() && InlineDataWithoutTheory(xUnitSymbolContext))
+                        symbolContext.ReportDiagnostic(CreateInlineDataWithoutTheoryDiagnostic(xUnitSymbolContext));
 
-            if (!factDerivedAttributes.Any())
-                return;
+                    if (!xUnitSymbolContext.FactDerivedAttributes.Any())
+                        return;
 
-            if (MultipleFactDerivedAttributes(factDerivedAttributes))
-                context.ReportDiagnostic(CreateMultipleFactDerivedAttributesDiagnostic(methodSymbol));
-            else if (FactWithParameters(factDerivedAttributes, factSymbol, methodSymbol))
-                context.ReportDiagnostic(CreateFactWithParametersDiagnostic(methodSymbol));
-            else if (TheoryWithoutParameters(factDerivedAttributes, theorySymbol, methodSymbol))
-                context.ReportDiagnostic(CreateTheoryWithoutParametersDiagnostic(methodSymbol));
+                    if (MultipleFactDerivedAttributes(xUnitSymbolContext))
+                        symbolContext.ReportDiagnostic(CreateMultipleFactDerivedAttributesDiagnostic(xUnitSymbolContext));
+                    else if (FactWithParameters(xUnitSymbolContext))
+                        symbolContext.ReportDiagnostic(CreateFactWithParametersDiagnostic(xUnitSymbolContext));
+                    else if (TheoryWithoutParameters(xUnitSymbolContext))
+                        symbolContext.ReportDiagnostic(CreateTheoryWithoutParametersDiagnostic(xUnitSymbolContext));
+                }, SymbolKind.Method);
+            });
+        }
+
+        private static Diagnostic CreateDiagnostic(DiagnosticDescriptor diagnostic, XUnitSymbolContext context)
+            => Diagnostic.Create(diagnostic, context.MethodSymbol.Locations[0], context.MethodSymbol.Name);
+
+        private class XUnitSymbolContext
+        {
+            public INamedTypeSymbol FactSymbol { get; set; }
+            public INamedTypeSymbol TheorySymbol { get; set; }
+            public INamedTypeSymbol InlineDataSymbol { get; set; }
+            public IMethodSymbol MethodSymbol { get; set; }
+            public ImmutableArray<AttributeData> FactDerivedAttributes { get; set; }
+
+            public bool HasFactAttribute => FactDerivedAttributes.Any(f => f.AttributeClass.Equals(FactSymbol));
+            public bool HasTheoryAttribute => FactDerivedAttributes.Any(f => f.AttributeClass.Equals(TheorySymbol));
+            public bool HasInlineDataAttribute => MethodSymbol.GetAttributes().Any(f => f.AttributeClass.Equals(InlineDataSymbol));
+            public bool HasParameters => MethodSymbol.Parameters.Any();
         }
     }
 }

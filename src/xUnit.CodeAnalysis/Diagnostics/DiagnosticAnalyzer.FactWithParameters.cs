@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace xUnit.CodeAnalysis.Diagnostics
@@ -18,10 +16,10 @@ namespace xUnit.CodeAnalysis.Diagnostics
             description: "[Fact] methods should not have parameters."
         );
 
-        private static bool FactWithParameters(ImmutableArray<AttributeData> factDerivedAttributes, INamedTypeSymbol factAttribute, IMethodSymbol methodSymbol) 
-            => methodSymbol.Parameters.Any() && factDerivedAttributes.Any(f => f.AttributeClass.Equals(factAttribute));
+        private static bool FactWithParameters(XUnitSymbolContext context)
+            => context.HasParameters && context.HasFactAttribute;
 
-        private static Diagnostic CreateFactWithParametersDiagnostic(IMethodSymbol methodSymbol)
-            => Diagnostic.Create(FactWithParametersRule, methodSymbol.Locations[0], methodSymbol.Name);
+        private static Diagnostic CreateFactWithParametersDiagnostic(XUnitSymbolContext context)
+            => CreateDiagnostic(FactWithParametersRule, context);
     }
 }
