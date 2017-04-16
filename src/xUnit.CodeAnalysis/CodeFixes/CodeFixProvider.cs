@@ -12,6 +12,10 @@ namespace xUnit.CodeAnalysis.CodeFixes
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(XUnitCodeAnalysisCodeFixProvider)), Shared]
     public partial class XUnitCodeAnalysisCodeFixProvider : CodeFixProvider
     {
+        private CodeFixContext _context;
+        private Diagnostic _diagnostic;
+        private MethodDeclarationSyntax _methodDeclaration;
+        
         public sealed override ImmutableArray<string> FixableDiagnosticIds 
             => ImmutableArray.Create(
                 XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId,
@@ -23,23 +27,24 @@ namespace xUnit.CodeAnalysis.CodeFixes
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var diagnostic = context.Diagnostics.First();
-            var methodDeclaration = await GetMethodDeclarationSyntax(context, diagnostic);
+            _context = context;
+            _diagnostic = context.Diagnostics.First();
+            _methodDeclaration = await GetMethodDeclarationSyntax();
 
-            if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId)
-                context.RegisterCodeFix(CreateReplaceFactWithTheoryCodeAction(context, methodDeclaration), diagnostic);
-            else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId)
-                context.RegisterCodeFix(CreateReplaceTheoryWithFactCodeAction(context, methodDeclaration), diagnostic);
-            else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
-                context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(context, methodDeclaration), diagnostic);
-            else if (diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.InlineDataWithoutTheoryDiagnosticId)
-                context.RegisterCodeFix(CreateAddTheoryCodeAction(context, methodDeclaration), diagnostic);
+            if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId)
+                context.RegisterCodeFix(CreateReplaceFactWithTheoryCodeAction(), _diagnostic);
+            else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId)
+                context.RegisterCodeFix(CreateReplaceTheoryWithFactCodeAction(), _diagnostic);
+            else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
+                context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(), _diagnostic);
+            else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.InlineDataWithoutTheoryDiagnosticId)
+                context.RegisterCodeFix(CreateAddTheoryCodeAction(), _diagnostic);
         }
 
-        private static async Task<MethodDeclarationSyntax> GetMethodDeclarationSyntax(CodeFixContext context, Diagnostic diagnostic)
+        private async Task<MethodDeclarationSyntax> GetMethodDeclarationSyntax()
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            return root.FindToken(diagnostic.Location.SourceSpan.Start)
+            var root = await _context.Document.GetSyntaxRootAsync(_context.CancellationToken).ConfigureAwait(false);
+            return root.FindToken(_diagnostic.Location.SourceSpan.Start)
                 .Parent
                 .AncestorsAndSelf()
                 .OfType<MethodDeclarationSyntax>()

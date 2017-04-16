@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace xUnit.CodeAnalysis.CodeFixes
 {
@@ -12,27 +10,26 @@ namespace xUnit.CodeAnalysis.CodeFixes
     {
         private const string AddTheoryCodeFixTitle = "Add [Theory] attribute";
 
-        private static CodeAction CreateAddTheoryCodeAction(CodeFixContext context, MethodDeclarationSyntax declaration)
+        private CodeAction CreateAddTheoryCodeAction()
             => CodeAction.Create(
                 title: AddTheoryCodeFixTitle,
-                createChangedDocument: c => AddTheoryAttribute(context.Document, declaration, c),
+                createChangedDocument: AddTheoryAttribute,
                 equivalenceKey: AddTheoryCodeFixTitle);
 
-        private static async Task<Document> AddTheoryAttribute(
-            Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private async Task<Document> AddTheoryAttribute(CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var syntaxRoot = await _context.Document.GetSyntaxRootAsync(cancellationToken);
             
             var attribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("Theory"));
             var attributeList = SyntaxFactory.AttributeList()
                 .AddAttributes(attribute)
-                .WithLeadingTrivia(methodDeclaration.GetLeadingTrivia());
+                .WithLeadingTrivia(_methodDeclaration.GetLeadingTrivia());
 
-            var updatedMethodDeclaration = methodDeclaration.WithAttributeLists(
-                methodDeclaration.AttributeLists.Insert(0, attributeList));
+            var updatedMethodDeclaration = _methodDeclaration.WithAttributeLists(
+                _methodDeclaration.AttributeLists.Insert(0, attributeList));
 
-            var updatedSyntaxRoot = syntaxRoot.ReplaceNode(methodDeclaration, updatedMethodDeclaration);
-            return document.WithSyntaxRoot(updatedSyntaxRoot);
+            var updatedSyntaxRoot = syntaxRoot.ReplaceNode(_methodDeclaration, updatedMethodDeclaration);
+            return _context.Document.WithSyntaxRoot(updatedSyntaxRoot);
         }
     }
 }

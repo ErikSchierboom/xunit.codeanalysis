@@ -3,9 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 
 namespace xUnit.CodeAnalysis.CodeFixes
@@ -14,26 +12,25 @@ namespace xUnit.CodeAnalysis.CodeFixes
     {
         private const string ReplaceFactWithTheoryCodeFixTitle = "Replace [Fact] with [Theory]";
 
-        private static CodeAction CreateReplaceFactWithTheoryCodeAction(CodeFixContext context, MethodDeclarationSyntax declaration) 
+        private CodeAction CreateReplaceFactWithTheoryCodeAction() 
             => CodeAction.Create(
                 title: ReplaceFactWithTheoryCodeFixTitle,
-                createChangedDocument: c => ReplaceFactWithTheory(context.Document, declaration, c),
+                createChangedDocument: ReplaceFactWithTheory,
                 equivalenceKey: ReplaceFactWithTheoryCodeFixTitle);
 
-        private static async Task<Document> ReplaceFactWithTheory(
-            Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private async Task<Document> ReplaceFactWithTheory(CancellationToken cancellationToken)
         {
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var semanticModel = await _context.Document.GetSemanticModelAsync(cancellationToken);
+            var syntaxRoot = await _context.Document.GetSyntaxRootAsync(cancellationToken);
             var theoryAttribute = SyntaxFactory.Attribute(SyntaxFactory.ParseName("Theory"));
 
             var factSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(FactAttribute).FullName);
-            var symbolInfo = semanticModel.GetDeclaredSymbol(methodDeclaration, cancellationToken);
+            var symbolInfo = semanticModel.GetDeclaredSymbol(_methodDeclaration, cancellationToken);
 
             foreach (var factAttribute in symbolInfo.GetAttributes().Where(a => a.AttributeClass.Equals(factSymbol)))
                 syntaxRoot = syntaxRoot.ReplaceNode(factAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken), theoryAttribute);
 
-            return document.WithSyntaxRoot(syntaxRoot);
+            return _context.Document.WithSyntaxRoot(syntaxRoot);
         }
     }
 }
