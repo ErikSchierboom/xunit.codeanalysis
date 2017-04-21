@@ -38,12 +38,16 @@ namespace xUnit.CodeAnalysis.Test.Helpers
     
     public class Tests
     {
-        " + attributes + @"
+" + GetFormattedAttributes(attributes) + @"
         public void Test(" + parameters + @")
         {
         }
     }";
         }
+
+        private static string GetFormattedAttributes(string attributes) 
+            => string.Join("\n", attributes.Split('\n').Select(a => "        " + a));
+
         #endregion
 
         #region Verifier wrappers

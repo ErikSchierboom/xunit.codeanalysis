@@ -6,7 +6,7 @@ namespace xUnit.CodeAnalysis
     {
         internal static class NamedTypeSymbolExtensions
         {
-            public static bool InheritsFromOrEquals(this INamedTypeSymbol type, INamedTypeSymbol baseType)
+            public static bool EqualsOrInheritsFrom(this INamedTypeSymbol type, INamedTypeSymbol baseType)
             {
                 var current = type;
                 while (current != null)

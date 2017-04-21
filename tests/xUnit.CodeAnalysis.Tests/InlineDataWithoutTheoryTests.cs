@@ -35,7 +35,7 @@ namespace xUnit.CodeAnalysis.Test
             VerifyCSharpDiagnostic(testClass, expected);
         }
 
-        [Theory(Skip = "Due to a bug in the Roslyn compiler, this doesn't compile in the test project")]
+        [Theory(Skip = "Due to a Roslyn bug, this doesn't compile in the test project")]
         [InlineData("[InlineData]", "int expected", "[Theory][InlineData]")]
         [InlineData("[InlineData(1)][Trait(\"c\",\"d\")]", "int expected", "[Theory][InlineData(1)][Trait(\"c\",\"d\")]")]
         [InlineData("[Trait(\"a\",\"b\")][InlineData(\"\",1,false)]", "string input, bool valid, int expected", "[Theory][Trait(\"a\",\"b\")][InlineData(\"\",1,false)]")]

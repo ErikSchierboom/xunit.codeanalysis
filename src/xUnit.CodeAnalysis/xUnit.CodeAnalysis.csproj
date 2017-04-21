@@ -34,12 +34,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CodeFixes\CodeFixProvider.AddInlineData.cs" />
     <Compile Include="CodeFixes\CodeFixProvider.cs" />
     <Compile Include="CodeFixes\CodeFixProvider.AddTheory.cs" />
     <Compile Include="CodeFixes\CodeFixProvider.MultipleFactDerivedAttributes.cs" />
     <Compile Include="CodeFixes\CodeFixProvider.ReplaceFactWithTheory.cs" />
     <Compile Include="CodeFixes\CodeFixProvider.ReplaceTheoryWithFact.cs" />
     <Compile Include="Diagnostics\DiagnosticAnalyzer.InlineDataWithoutTheory.cs" />
+    <Compile Include="Diagnostics\DiagnosticAnalyzer.TheoryWithoutData.cs" />
     <Compile Include="Diagnostics\DiagnosticAnalyzer.TheoryWithoutParameters.cs" />
     <Compile Include="Diagnostics\DiagnosticAnalyzer.MultipleFactDerivedAttributes.cs" />
     <Compile Include="Diagnostics\DiagnosticAnalyzer.FactWithParameters.cs" />

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
+using Xunit.Sdk;
 
 namespace xUnit.CodeAnalysis.Sample
 {
@@ -26,8 +29,21 @@ namespace xUnit.CodeAnalysis.Sample
         {
         }
 
+        public class CustomData : DataAttribute
+        {
+            public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+            {
+                return new object[][]
+                {
+                    new object[] {1},
+                    new object[] {2},
+                };
+            }
+        }
+
         [Theory]
-        public void TheoryWithoutData()
+        [CustomData]
+        public void TheoryWithoutData(int expected)
         {
         }
 

@@ -29,7 +29,7 @@ namespace xUnit.CodeAnalysis.CodeFixes
 
             var factDerivedAttributes = symbolInfo
                 .GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFromOrEquals(factSymbol))
+                .Where(a => a.AttributeClass.EqualsOrInheritsFrom(factSymbol))
                 .ToImmutableArray();
 
             var updatedMethodDeclaration = _methodDeclaration.RemoveNodes(

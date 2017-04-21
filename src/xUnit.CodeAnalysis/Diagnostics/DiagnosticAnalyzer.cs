@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using xUnit.CodeAnalysis.Microsoft.CodeAnalysis.Shared.Extensions;
 using Xunit;
+using Xunit.Sdk;
 
 namespace xUnit.CodeAnalysis.Diagnostics
 {
@@ -12,12 +13,14 @@ namespace xUnit.CodeAnalysis.Diagnostics
     {
         private static readonly string FactAttributeTypeFullName = typeof(FactAttribute).FullName;
         private static readonly string TheoryAttributeTypeFullName = typeof(TheoryAttribute).FullName;
+        private static readonly string DataAttributeTypeFullName = typeof(DataAttribute).FullName;
         private static readonly string InlineDataAttributeTypeFullName = typeof(InlineDataAttribute).FullName;
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics 
             => ImmutableArray.Create(
                 FactWithParametersRule, 
                 TheoryWithoutParametersRule,
+                TheoryWithoutDataRule,
                 MultipleFactDerivedAttributesRule,
                 InlineDataWithoutTheoryRule);
 
@@ -30,6 +33,7 @@ namespace xUnit.CodeAnalysis.Diagnostics
                 {
                     FactSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(FactAttributeTypeFullName),
                     TheorySymbol = compilationStartContext.Compilation.GetTypeByMetadataName(TheoryAttributeTypeFullName),
+                    DataSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(DataAttributeTypeFullName),
                     InlineDataSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(InlineDataAttributeTypeFullName)
                 };
 
@@ -39,7 +43,7 @@ namespace xUnit.CodeAnalysis.Diagnostics
                     xUnitSymbolContext.FactDerivedAttributes = 
                         xUnitSymbolContext.MethodSymbol
                             .GetAttributes()
-                            .Where(a => a.AttributeClass.InheritsFromOrEquals(xUnitSymbolContext.FactSymbol))
+                            .Where(a => a.AttributeClass.EqualsOrInheritsFrom(xUnitSymbolContext.FactSymbol))
                             .ToImmutableArray();
 
                     if (!xUnitSymbolContext.FactDerivedAttributes.Any() && InlineDataWithoutTheory(xUnitSymbolContext))
@@ -54,6 +58,8 @@ namespace xUnit.CodeAnalysis.Diagnostics
                         symbolContext.ReportDiagnostic(CreateFactWithParametersDiagnostic(xUnitSymbolContext));
                     else if (TheoryWithoutParameters(xUnitSymbolContext))
                         symbolContext.ReportDiagnostic(CreateTheoryWithoutParametersDiagnostic(xUnitSymbolContext));
+                    else if (TheoryWithoutData(xUnitSymbolContext))
+                        symbolContext.ReportDiagnostic(CreateTheoryWithoutDataDiagnostic(xUnitSymbolContext));
                 }, SymbolKind.Method);
             });
         }
@@ -65,12 +71,14 @@ namespace xUnit.CodeAnalysis.Diagnostics
         {
             public INamedTypeSymbol FactSymbol { get; set; }
             public INamedTypeSymbol TheorySymbol { get; set; }
+            public INamedTypeSymbol DataSymbol { get; set; }
             public INamedTypeSymbol InlineDataSymbol { get; set; }
             public IMethodSymbol MethodSymbol { get; set; }
             public ImmutableArray<AttributeData> FactDerivedAttributes { get; set; }
 
             public bool HasFactAttribute => FactDerivedAttributes.Any(f => f.AttributeClass.Equals(FactSymbol));
             public bool HasTheoryAttribute => FactDerivedAttributes.Any(f => f.AttributeClass.Equals(TheorySymbol));
+            public bool HasDataAttribute => MethodSymbol.GetAttributes().Any(f => f.AttributeClass.EqualsOrInheritsFrom(DataSymbol));
             public bool HasInlineDataAttribute => MethodSymbol.GetAttributes().Any(f => f.AttributeClass.Equals(InlineDataSymbol));
             public bool HasParameters => MethodSymbol.Parameters.Any();
         }

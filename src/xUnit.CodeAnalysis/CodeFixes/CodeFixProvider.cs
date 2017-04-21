@@ -20,6 +20,7 @@ namespace xUnit.CodeAnalysis.CodeFixes
             => ImmutableArray.Create(
                 XUnitCodeAnalysisAnalyzer.FactWithParametersDiagnosticId,
                 XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId,
+                XUnitCodeAnalysisAnalyzer.TheoryWithoutDataDiagnosticId,
                 XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId,
                 XUnitCodeAnalysisAnalyzer.InlineDataWithoutTheoryDiagnosticId);
 
@@ -35,6 +36,8 @@ namespace xUnit.CodeAnalysis.CodeFixes
                 context.RegisterCodeFix(CreateReplaceFactWithTheoryCodeAction(), _diagnostic);
             else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.TheoryWithoutParametersDiagnosticId)
                 context.RegisterCodeFix(CreateReplaceTheoryWithFactCodeAction(), _diagnostic);
+            else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.TheoryWithoutDataDiagnosticId)
+                context.RegisterCodeFix(CreateAddInlineDataCodeAction(), _diagnostic);
             else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.MultipleFactDerivedAttributesDiagnosticId)
                 context.RegisterCodeFix(CreateMultipleFactDerivedAttributesCodeAction(), _diagnostic);
             else if (_diagnostic.Descriptor.Id == XUnitCodeAnalysisAnalyzer.InlineDataWithoutTheoryDiagnosticId)
